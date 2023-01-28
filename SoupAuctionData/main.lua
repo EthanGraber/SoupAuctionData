@@ -2,18 +2,14 @@ local initialQuery
 local auctions = {}
 DATA = {}
  
-local function ScanAuctions()
-	local num_items = C_AuctionHouse.GetNumReplicateItems()
-	print(format("Number of Auctions: %d", num_items))
-
-	if num_items == 0 then
-		print("Try opening the AH first.")
-	end
-
+local function ScanAuctions(startIndex, stepSize)
 	local beginTime = debugprofilestop()
 	local continuables = {}
 	wipe(auctions)
-	for i = 0, C_AuctionHouse.GetNumReplicateItems()-1 do
+
+	-- https://github.com/Auctionator/Auctionator/blob/master/Source_Mainline/FullScan/Mixins/Frame.lua
+	local i = startIndex
+	while i < startIndex+stepSize do
 		auctions[i] = {C_AuctionHouse.GetReplicateItemInfo(i)}
 		if not auctions[i][18] then -- hasAllInfo
 			local item = Item:CreateFromItemID(auctions[i][17]) -- itemID
@@ -29,19 +25,18 @@ local function ScanAuctions()
 				end
 			end)
 		end
+		i = i + 1
 	end
+
+	C_Timer.After(0.01, function()
+		self:ScanAuctions(startIndex+stepSize, stepSize)
+	end)
 end
 
 local function OnEvent(self, event)
 	if event == "AUCTION_HOUSE_SHOW" then
 		C_AuctionHouse.ReplicateItems()
 		initialQuery = true
-	elseif event == "REPLICATE_ITEM_LIST_UPDATE" then
-		if initialQuery then
-			ScanAuctions()
-			initialQuery = false
-		end
-	end
 end
 
 local f = CreateFrame("Frame")
@@ -51,5 +46,11 @@ f:SetScript("OnEvent", OnEvent)
 
 SLASH_SOUPAUCTIONDATA1 = '/soupahd'
 SlashCmdList["SOUPAUCTIONDATA"] = function(msg, editBox)
-	ScanAuctions()
+	local num_items = C_AuctionHouse.GetNumReplicateItems()
+	print(format("Number of Auctions: %d", num_items))
+
+	if num_items == 0 then
+		print("Try opening the AH first.")
+	end
+	ScanAuctions(0,50)
 end
