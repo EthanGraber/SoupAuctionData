@@ -39,11 +39,6 @@ local function OnEvent(self, event)
 		initialQuery = true
 end
 
-local f = CreateFrame("Frame")
-f:RegisterEvent("AUCTION_HOUSE_SHOW")
-f:RegisterEvent("REPLICATE_ITEM_LIST_UPDATE")
-f:SetScript("OnEvent", OnEvent)
-
 SLASH_SOUPAUCTIONDATA1 = '/soupahd'
 SlashCmdList["SOUPAUCTIONDATA"] = function(msg, editBox)
 	local num_items = C_AuctionHouse.GetNumReplicateItems()
@@ -54,3 +49,8 @@ SlashCmdList["SOUPAUCTIONDATA"] = function(msg, editBox)
 	end
 	ScanAuctions(0,50)
 end
+
+local f = CreateFrame("Frame")
+f:RegisterEvent("AUCTION_HOUSE_SHOW")
+f:RegisterEvent("REPLICATE_ITEM_LIST_UPDATE")
+f:SetScript("OnEvent", OnEvent)
