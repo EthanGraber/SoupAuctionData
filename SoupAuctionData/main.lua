@@ -1,10 +1,15 @@
-require "CsvUtils"
-local io = require "io"
-
 local initialQuery
 local auctions = {}
+DATA = {}
  
 local function ScanAuctions()
+	local num_items = C_AuctionHouse.GetNumReplicateItems()
+	print(format("Number of Auctions: %d", num_items))
+
+	if num_items == 0 then
+		print("Try opening the AH first.")
+	end
+
 	local beginTime = debugprofilestop()
 	local continuables = {}
 	wipe(auctions)
@@ -20,11 +25,7 @@ local function ScanAuctions()
 				if not next(continuables) then
 					print(format("Scanned %d auctions in %d milliseconds", #auctions+1, debugprofilestop()-beginTime))
 					-- do something with `auctions` or fire some callback
-            csv = toCSV(auctions)
-            f = io.open("out.csv", "w+")
-            io.output(f)
-            io.write(csv)
-            io.close(f)
+            DATA = auctions
 				end
 			end)
 		end
@@ -47,3 +48,8 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("AUCTION_HOUSE_SHOW")
 f:RegisterEvent("REPLICATE_ITEM_LIST_UPDATE")
 f:SetScript("OnEvent", OnEvent)
+
+SLASH_SOUPAUCTIONDATA1 = '/soupahd'
+SlashCmdList["SOUPAUCTIONDATA"] = function(msg, editBox)
+	ScanAuctions()
+end
