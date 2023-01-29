@@ -36,7 +36,7 @@ local function ScanAuctions(startIndex, stepSize)
 			local item = Item:CreateFromItemID(current_item[17]) -- itemID
 
 			item:ContinueOnItemLoad(function()
-				auctions[current_item[17]] = {C_AuctionHouse.GetReplicateItemInfo(i)}
+				auctions[i] = {C_AuctionHouse.GetReplicateItemInfo(i)}
 
 				LEFT_TO_PROCESS = LEFT_TO_PROCESS - 1
 				if LEFT_TO_PROCESS <= 0 then
@@ -44,7 +44,7 @@ local function ScanAuctions(startIndex, stepSize)
 				end
 			end)
 		else
-			auctions[current_item[17]] = {C_AuctionHouse.GetReplicateItemInfo(i)}
+			auctions[i] = {C_AuctionHouse.GetReplicateItemInfo(i)}
 			LEFT_TO_PROCESS = LEFT_TO_PROCESS - 1
 			if LEFT_TO_PROCESS <= 0 then
 				CleanAuctions()
