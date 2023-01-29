@@ -2,6 +2,6 @@
 ## Title: SoupAuctionData
 ## Author: Silicate#4370 (discord)
 ## Version: 0.0.1
-## SavedVariables: DATA
+## SavedVariables: DATA, LAST_SCAN_TIME
 
 main.lua
